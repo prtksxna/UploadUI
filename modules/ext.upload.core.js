@@ -77,8 +77,6 @@ UW.Uploader.prototype.api = new mw.Api();
  * @event fileUploaded
  *
  * Emitted when the file is uploaded
- *
- * @param {Object} details of where the file was uploaded etc.
  */
 
 /**
@@ -181,12 +179,11 @@ UW.Uploader.prototype.initFileUpload = function () {
 UW.Uploader.prototype.uploadFile = function () {
 	var self = this;
 
-	console.log( 'Uploading file...' );
+
 	var file = self.uploadForm.file.getValue();
 	self.api.uploadToStash( file, { filename: file.name } ).then( function ( cb ) {
-		self.emit( 'fileUploaded', {
-			url: 'cat.png'
-		} );
+		self.finishUpload = cb;
+		self.emit( 'fileUploaded' );
 	} );
 };
 
@@ -195,8 +192,6 @@ UW.Uploader.prototype.uploadFile = function () {
  * TODO: Should use mw.UploadWizardUpload.js
  */
 UW.Uploader.prototype.getFileData = function () {
-	console.log( 'Getting file data....' );
-
 	var fileDisplayElement = this.getFileDisplayElement();
 	return {
 		name: this.uploadForm.file.getValue().name,
@@ -437,15 +432,12 @@ UW.Uploader.prototype.saveFile = function () {
 	// TODO: Validations
 	// TODO: Get all details and post to server
 	// TODO: Should use mw.UploadWizardUpload.js
-	setTimeout( function () {
-		self.emit( 'fileSaved', {
-			internalUrl: 'cat.png',
-			externalUrl: 'http://upload.wikimedia.org/cat.png'
-		} );
-	}, 1000 ); // Arbitrary upload time
+	self.finishUpload( { filename: self.detailsForm.name.getValue() } ).then( function ( result ) {
+		console.log( result );
+		self.emit( 'fileSaved', result );
+	} );
 
 	self.on( 'fileSaved', self.renderUsage.bind( self ) );
-
 	self.renderWaitForSave();
 };
 
@@ -484,11 +476,11 @@ UW.Uploader.prototype.renderUsage = function ( d ) {
 	self.usage.doneLabel = new OO.ui.LabelWidget( { label: 'This file was successfully uploaded' } );
 	self.usage.onWikiLabel = new OO.ui.LabelWidget( { label: 'On wiki use' } );
 	self.usage.onWikiInput = new OO.ui.TextInputWidget( {
-		value: '[[File:' + d.internalUrl + ']]'
+		value: '[[' + d.upload.imageinfo.canonicaltitle + ']]'
 	} );
 	self.usage.offWikiLabel = new OO.ui.LabelWidget( { label: 'Off wiki use' } );
 	self.usage.offWikiInput = new OO.ui.TextInputWidget( {
-		value: d.externalUrl
+		value: d.upload.imageinfo.url
 	} );
 
 	self.usage.dismiss = new OO.ui.Widget();
