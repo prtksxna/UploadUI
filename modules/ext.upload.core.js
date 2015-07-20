@@ -179,8 +179,6 @@ UW.Uploader.prototype.initFileUpload = function () {
 UW.Uploader.prototype.uploadFile = function () {
 	var self = this;
 
-
-	var file = self.uploadForm.file.getValue();
 	self.api.uploadToStash( file, { filename: file.name } ).then( function ( cb ) {
 		self.finishUpload = cb;
 		self.emit( 'fileUploaded' );
@@ -206,7 +204,17 @@ UW.Uploader.prototype.getFileData = function () {
  * TODO: Should use mw.UploadWizardUpload.js
  */
 UW.Uploader.prototype.getFileDisplayElement = function () {
-	return $( '<img>' ).attr( 'src', 'cat.png' );
+	var self = this;
+	var file = self.uploadForm.file.getValue();
+	var $img = $( '<img>' );
+
+	var reader = new FileReader();
+	reader.onload = function ( file ) {
+		$img.attr( 'src', file.target.result );
+	}
+	reader.readAsDataURL( file );
+
+	return $img;
 };
 
 /**
