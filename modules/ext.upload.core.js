@@ -179,6 +179,7 @@ UW.Uploader.prototype.initFileUpload = function () {
 UW.Uploader.prototype.uploadFile = function () {
 	var self = this;
 
+	var file = self.uploadForm.file.getValue();
 	self.api.uploadToStash( file, { filename: file.name } ).then( function ( cb ) {
 		self.finishUpload = cb;
 		self.emit( 'fileUploaded' );
