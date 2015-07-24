@@ -4,7 +4,7 @@
 			$oolink = $( oolink );
 
 	var showDialog = function () {
-		var uploadDialog = new UW.UploadDialog( { size: 'larger' } );
+		var uploadDialog = new UW.UploadDialog( { size: 'small' } );
 		var windowManager = new OO.ui.WindowManager();
 		$( 'body' ).append( windowManager.$element );
 		windowManager.addWindows( [ uploadDialog ] );

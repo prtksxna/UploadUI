@@ -30,12 +30,8 @@ $wgMessagesDirs['UploadUI'] = __DIR__ . '/i18n';
 // Register modules
 $wgResourceModules['ext.uploadui'] = array(
 	'scripts' => array(
-		'modules/ext.upload.core.js',
 		'modules/ext.upload.dialog.js',
 		'modules/ext.upload.setuplink.js',
-	),
-	'styles' => array(
-		'modules/ext.upload.core.less',
 	),
 	'messages' => array(
 	),
