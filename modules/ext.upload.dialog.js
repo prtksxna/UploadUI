@@ -17,9 +17,9 @@ OO.inheritClass( mw.uploadDialog, OO.ui.ProcessDialog );
 mw.uploadDialog.static.title = 'Upload file';
 
 /**
- * @property api
+ * @property upload
  */
-mw.uploadDialog.prototype.api = new mw.Api();
+mw.uploadDialog.prototype.upload = new mw.Upload();
 
 /**
  * @property
@@ -68,7 +68,7 @@ mw.uploadDialog.prototype.getActionProcess = function ( action ) {
 
 	if ( action === 'insert' ) {
 		return new OO.ui.Process( function () {
-			self.close( self.uploadDetails );
+			self.close( { }  ); // TODO: Return something useful
 		} );
 	}
 	if ( action === 'upload' ) {
@@ -139,23 +139,15 @@ mw.uploadDialog.prototype.renderInfoForm = function () {
  * @method
  */
 mw.uploadDialog.prototype.renderInsertForm = function () {
-	var d = this.uploadDetails;
-	console.log( d  );
+	var self = this;
 	this.insertForm = {};
-	this.insertForm.onWiki= new OO.ui.TextInputWidget( {
-		value: d.upload.imageinfo.canonicaltitle
-	} );
-	this.insertForm.offWiki= new OO.ui.TextInputWidget( {
-		value: d.upload.imageinfo.url
+	this.insertForm.filename = new OO.ui.TextInputWidget( {
+		value: '[[File:' + self.upload.getFilename() + ']]'
 	} );
 	this.insertForm.fieldset = new OO.ui.FieldsetLayout( { label: 'Usage' } );
 	this.insertForm.fieldset.addItems( [
-		new OO.ui.FieldLayout( this.insertForm.onWiki, {
-			label: 'On wiki',
-			align: 'top'
-		} ),
-		new OO.ui.FieldLayout( this.insertForm.offWiki, {
-			label: 'Off wiki',
+		new OO.ui.FieldLayout( this.insertForm.filename, {
+			label: 'File name',
 			align: 'top'
 		} )
 	] );
@@ -169,7 +161,8 @@ mw.uploadDialog.prototype.uploadFile = function () {
 	var self = this,
 		file = this.uploadForm.file.getValue();
 	console.log( 'uploading' )
-	this.uploadPromise = this.api.uploadToStash( file, { filename: file.name } );
+	this.upload.setFile( file );
+	this.uploadPromise = this.upload.uploadToStash();
 
 	this.uploadPromise.then( function ( cb ) {
 		self.emit( 'fileUploaded' );
@@ -183,26 +176,37 @@ mw.uploadDialog.prototype.uploadFile = function () {
 mw.uploadDialog.prototype.saveFile = function () {
 	var self = this,
 		promise = $.Deferred();
-		info = this.getInfo();
-	console.log( 'saving', info )
+
+	this.upload.setFilename( this.infoForm.name.getValue() );
+	this.upload.setText( this.infoForm.description.getValue() );
+	console.log( 'saving' )
 
 	// TODO: Validations
 	this.uploadPromise.always( function ( cb ) {
 
-		if ( cb.info !== undefined ) {
-			promise.reject( new OO.ui.Error( cb.info ) );
+		if ( self.upload.getState() === mw.Upload.State.ERROR ) {
+			promise.reject( new OO.ui.Error( "An error occurred"  ) );
 			return false;
 		}
 
-		cb( info ).then( function ( result ) {
-			if ( result.upload.result !== "Success" ) {
-				promise.reject( new OO.ui.Error( 'Sorry! There was an error', { recoverable: false } ) );
-				console.log( result );
+		if ( self.upload.getState() === mw.Upload.State.WARNING ) {
+			promise.reject( new OO.ui.Error( "A warning occurred"  ) );
+			return false;
+		}
+
+		self.upload.finishStashUpload().then( function () {
+			if ( self.upload.getState() === mw.Upload.State.ERROR ) {
+				promise.reject( new OO.ui.Error( "An error occurred"  ) );
 				return false;
 			}
-			self.uploadDetails = result;
+
+			if ( self.upload.getState() === mw.Upload.State.WARNING ) {
+				promise.reject( new OO.ui.Error( "A warning occurred"  ) );
+				return false;
+			}
+
 			promise.resolve();
-			self.emit( 'fileSaved', result );
+			self.emit( 'fileSaved' );
 		} );
 	} );
 
@@ -215,16 +219,6 @@ mw.uploadDialog.prototype.saveFile = function () {
 	} );
 
 	return promise;
-}
-
-/**
- * @method
- */
-mw.uploadDialog.prototype.getInfo = function () {
-	return {
-		filename: this.infoForm.name.getValue(),
-		text: this.infoForm.description.getValue()
-	};
 }
 
 } ( mediaWiki ) )

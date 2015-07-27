@@ -35,7 +35,7 @@ $wgResourceModules['ext.uploadui'] = array(
 	),
 	'dependencies' => array(
 		'oojs-ui',
-		'mediawiki.api.upload'
+		'mediawiki.Upload'
 	),
 
 	'localBasePath' => __DIR__,
