@@ -39,7 +39,7 @@ mw.uploadDialog.prototype.initialize = function () {
 
 	this.renderUploadForm();
 	this.content = new OO.ui.PanelLayout( { padded: true, expanded: false } );
-	this.content.$element.append( this.$uploadForm )
+	this.content.$element.append( this.uploadForm.form.$element )
 	this.$body.append( this.content.$element );
 };
 
@@ -77,7 +77,7 @@ mw.uploadDialog.prototype.getActionProcess = function ( action ) {
 			self.renderInfoForm();
 			self.content.$element
 				.html( '' )
-				.append( self.$infoForm );
+				.append( self.infoForm.form.$element );
 			self.actions.setMode( 'save' );
 		} );
 	}
@@ -96,12 +96,10 @@ mw.uploadDialog.prototype.getActionProcess = function ( action ) {
  */
 mw.uploadDialog.prototype.renderUploadForm = function () {
 	this.uploadForm = {}
-	this.$uploadForm = $( '<div>' ).attr( 'id', 'upload-dialog-upload-form' );
 	this.uploadForm.file = new OO.ui.SelectFileWidget();
 	this.uploadForm.fieldset = new OO.ui.FieldsetLayout( { label: 'Select file' } );
 	this.uploadForm.fieldset.addItems( [ this.uploadForm.file ] );
 	this.uploadForm.form = new OO.ui.FormLayout( { items: [ this.uploadForm.fieldset ] } );
-	this.$uploadForm.append( this.uploadForm.form.$element );
 }
 
 /**
@@ -110,7 +108,6 @@ mw.uploadDialog.prototype.renderUploadForm = function () {
 mw.uploadDialog.prototype.renderInfoForm = function () {
 	var fileName = this.uploadForm.file.getValue().name;
 	this.infoForm = {};
-	this.$infoForm = $( '<div>' ).attr( 'id', 'upload-dialog-info-form' );
 	this.infoForm.name = new OO.ui.TextInputWidget( {
 		value: fileName,
 		indicator: 'required',
@@ -136,7 +133,6 @@ mw.uploadDialog.prototype.renderInfoForm = function () {
 		} )
 	] );
 	this.infoForm.form = new OO.ui.FormLayout( { items: [ this.infoForm.fieldset ] } );
-	this.$infoForm.append( this.infoForm.form.$element );
 }
 
 /**
@@ -146,7 +142,6 @@ mw.uploadDialog.prototype.renderInsertForm = function () {
 	var d = this.uploadDetails;
 	console.log( d  );
 	this.insertForm = {};
-	this.$insertForm = $( '<div>' ).attr( 'id', 'upload-dialog-insert-form' );
 	this.insertForm.onWiki= new OO.ui.TextInputWidget( {
 		value: d.upload.imageinfo.canonicaltitle
 	} );
@@ -165,7 +160,6 @@ mw.uploadDialog.prototype.renderInsertForm = function () {
 		} )
 	] );
 	this.insertForm.form = new OO.ui.FormLayout( { items: [ this.insertForm.fieldset ] } );
-	this.$insertForm.append( this.insertForm.form.$element );
 }
 
 /**
@@ -216,7 +210,7 @@ mw.uploadDialog.prototype.saveFile = function () {
 		self.renderInsertForm();
 		self.content.$element
 			.html( '' )
-			.append( self.$insertForm );
+			.append( self.insertForm.form.$element );
 		self.actions.setMode( 'insert' )
 	} );
 
