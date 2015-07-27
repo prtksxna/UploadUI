@@ -76,7 +76,7 @@ mw.uploadDialog.prototype.getActionProcess = function ( action ) {
 			self.uploadFile();
 			self.renderInfoForm();
 			self.content.$element
-				.html( '' )
+				.empty()
 				.append( self.infoForm.form.$element );
 			self.actions.setMode( 'save' );
 		} );
@@ -209,7 +209,7 @@ mw.uploadDialog.prototype.saveFile = function () {
 	self.on( 'fileSaved', function () {
 		self.renderInsertForm();
 		self.content.$element
-			.html( '' )
+			.empty()
 			.append( self.insertForm.form.$element );
 		self.actions.setMode( 'insert' )
 	} );
