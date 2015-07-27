@@ -33,8 +33,6 @@ $wgResourceModules['ext.uploadui'] = array(
 		'modules/ext.upload.dialog.js',
 		'modules/ext.upload.setuplink.js',
 	),
-	'messages' => array(
-	),
 	'dependencies' => array(
 		'oojs-ui',
 		'mediawiki.api.upload'

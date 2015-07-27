@@ -1,4 +1,4 @@
-var UW = UW || {};
+( function ( mw ) {
 
 /**
  * Uploader interface for a single file in a ProcessDialog
@@ -6,25 +6,25 @@ var UW = UW || {};
  * @class
  * @extends OO.ui.ProcessDialog
  */
-UW.UploadDialog = function ( config ) {
-	UW.UploadDialog.super.call( this, config );
+mw.uploadDialog = function ( config ) {
+	mw.uploadDialog.super.call( this, config );
 }
-OO.inheritClass( UW.UploadDialog, OO.ui.ProcessDialog );
+OO.inheritClass( mw.uploadDialog, OO.ui.ProcessDialog );
 
 /**
  * @property
  */
-UW.UploadDialog.static.title = 'Upload file';
+mw.uploadDialog.static.title = 'Upload file';
 
 /**
  * @property api
  */
-UW.UploadDialog.prototype.api = new mw.Api();
+mw.uploadDialog.prototype.api = new mw.Api();
 
 /**
  * @property
  */
-UW.UploadDialog.static.actions = [
+mw.uploadDialog.static.actions = [
 	{ flags: 'safe', action: 'cancel', label: 'Cancel', modes: [ 'upload', 'insert', 'save' ] },
 	{ flags: [ 'primary', 'progressive' ], label: 'Done', action: 'insert', modes: 'insert' },
 	{ flags: [ 'primary', 'progressive' ], label: 'Save', action: 'save', modes: 'save' },
@@ -34,8 +34,8 @@ UW.UploadDialog.static.actions = [
 /**
  * @method
  */
-UW.UploadDialog.prototype.initialize = function () {
-	UW.UploadDialog.super.prototype.initialize.call( this );
+mw.uploadDialog.prototype.initialize = function () {
+	mw.uploadDialog.super.prototype.initialize.call( this );
 
 	this.renderUploadForm();
 	this.content = new OO.ui.PanelLayout( { padded: true, expanded: false } );
@@ -46,15 +46,15 @@ UW.UploadDialog.prototype.initialize = function () {
 /**
  * @method
  */
-UW.UploadDialog.prototype.getBodyHeight = function () {
+mw.uploadDialog.prototype.getBodyHeight = function () {
 	return 300;
 };
 
 /**
  * @method
  */
-UW.UploadDialog.prototype.getSetupProcess = function ( data ) {
-	return UW.UploadDialog.super.prototype.getSetupProcess.call( this, data )
+mw.uploadDialog.prototype.getSetupProcess = function ( data ) {
+	return mw.uploadDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
 			this.actions.setMode( 'upload' );
 		}, this );
@@ -63,7 +63,7 @@ UW.UploadDialog.prototype.getSetupProcess = function ( data ) {
 /**
  * @method
  */
-UW.UploadDialog.prototype.getActionProcess = function ( action ) {
+mw.uploadDialog.prototype.getActionProcess = function ( action ) {
 	var self = this;
 
 	if ( action === 'insert' ) {
@@ -88,13 +88,13 @@ UW.UploadDialog.prototype.getActionProcess = function ( action ) {
 		self.close();
 	}
 
-	return UW.UploadDialog.super.prototype.getActionProcess.call( this, action );
+	return mw.uploadDialog.super.prototype.getActionProcess.call( this, action );
 };
 
 /**
  * @method
  */
-UW.UploadDialog.prototype.renderUploadForm = function () {
+mw.uploadDialog.prototype.renderUploadForm = function () {
 	this.uploadForm = {}
 	this.$uploadForm = $( '<div>' ).attr( 'id', 'upload-dialog-upload-form' );
 	this.uploadForm.file = new OO.ui.SelectFileWidget();
@@ -107,7 +107,7 @@ UW.UploadDialog.prototype.renderUploadForm = function () {
 /**
  * @method
  */
-UW.UploadDialog.prototype.renderInfoForm = function () {
+mw.uploadDialog.prototype.renderInfoForm = function () {
 	var fileName = this.uploadForm.file.getValue().name;
 	this.infoForm = {};
 	this.$infoForm = $( '<div>' ).attr( 'id', 'upload-dialog-info-form' );
@@ -142,7 +142,7 @@ UW.UploadDialog.prototype.renderInfoForm = function () {
 /**
  * @method
  */
-UW.UploadDialog.prototype.renderInsertForm = function () {
+mw.uploadDialog.prototype.renderInsertForm = function () {
 	var d = this.uploadDetails;
 	console.log( d  );
 	this.insertForm = {};
@@ -171,7 +171,7 @@ UW.UploadDialog.prototype.renderInsertForm = function () {
 /**
  * @method
  */
-UW.UploadDialog.prototype.uploadFile = function () {
+mw.uploadDialog.prototype.uploadFile = function () {
 	var self = this,
 		file = this.uploadForm.file.getValue();
 	console.log( 'uploading' )
@@ -186,7 +186,7 @@ UW.UploadDialog.prototype.uploadFile = function () {
 /**
  * @method
  */
-UW.UploadDialog.prototype.saveFile = function () {
+mw.uploadDialog.prototype.saveFile = function () {
 	var self = this,
 		promise = $.Deferred();
 		info = this.getInfo();
@@ -226,9 +226,11 @@ UW.UploadDialog.prototype.saveFile = function () {
 /**
  * @method
  */
-UW.UploadDialog.prototype.getInfo = function () {
+mw.uploadDialog.prototype.getInfo = function () {
 	return {
 		filename: this.infoForm.name.getValue(),
 		text: this.infoForm.description.getValue()
 	};
 }
+
+} ( mediaWiki ) )
