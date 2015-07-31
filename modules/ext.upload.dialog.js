@@ -17,11 +17,6 @@ OO.inheritClass( mw.uploadDialog, OO.ui.ProcessDialog );
 mw.uploadDialog.static.title = 'Upload file';
 
 /**
- * @property upload
- */
-mw.uploadDialog.prototype.upload = new mw.Upload();
-
-/**
  * @property
  */
 mw.uploadDialog.static.actions = [
@@ -37,10 +32,18 @@ mw.uploadDialog.static.actions = [
 mw.uploadDialog.prototype.initialize = function () {
 	mw.uploadDialog.super.prototype.initialize.call( this );
 
+	this.upload = this.getUploadObject();
 	this.renderUploadForm();
 	this.content = new OO.ui.PanelLayout( { padded: true, expanded: false } );
 	this.content.$element.append( this.uploadForm.form.$element )
 	this.$body.append( this.content.$element );
+};
+
+/**
+ * @method
+ */
+mw.uploadDialog.prototype.getUploadObject = function () {
+	return new mw.Upload();
 };
 
 /**
