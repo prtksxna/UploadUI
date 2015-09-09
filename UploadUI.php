@@ -35,7 +35,9 @@ $wgResourceModules['ext.uploadui'] = array(
 	),
 	'dependencies' => array(
 		'oojs-ui',
-		'mediawiki.Upload'
+		'mediawiki.Upload',
+		'mediawiki.Upload.Dialog',
+		'mediawiki.ForeignStructuredUpload.Dialog',
 	),
 
 	'localBasePath' => __DIR__,

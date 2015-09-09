@@ -4,7 +4,10 @@
 			$oolink = $( oolink );
 
 	var showDialog = function () {
-		var uploadDialog = new mw.uploadDialog( { size: 'small' } );
+		var uploadDialog = new mw.ForeignStructuredUpload.Dialog( {
+			size: 'small',
+			targetHost: 'localhost:8080'
+		} );
 		var windowManager = new OO.ui.WindowManager();
 		$( 'body' ).append( windowManager.$element );
 		windowManager.addWindows( [ uploadDialog ] );
